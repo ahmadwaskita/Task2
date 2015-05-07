@@ -30,7 +30,6 @@
  * @author Ahmad Waskita
  * 
  */
-
 require 'Player.class.php';
 
 $control;
@@ -39,17 +38,17 @@ $players = [];
 $show = false;
 $info = false;
 
-function startScreen(){
-        echo "\n====================================\n";
-        echo "Welcome to the Battle Arena\n";
-        echo "--------------------------------------\n";
-        echo "Description: \n";
-        echo "1. type \"new\" to create a character\n";
-        echo "2. type \"start\" to begin the fight\n";
-        echo "3. type \"exit\" to exit program\n";
-        echo "--------------------------------------\n";
-    }
-    
+function startScreen() {
+    echo "\n====================================\n";
+    echo "Welcome to the Battle Arena\n";
+    echo "--------------------------------------\n";
+    echo "Description: \n";
+    echo "1. type \"new\" to create a character\n";
+    echo "2. type \"start\" to begin the fight\n";
+    echo "3. type \"exit\" to exit program\n";
+    echo "--------------------------------------\n";
+}
+
 startScreen();
 echo "Current Player: ";
 echo $counter;
@@ -59,8 +58,8 @@ $control = fgets(STDIN);
 $control = trim(strtolower($control));
 
 
-while (1){
-    if ($show == true){
+while (1) {
+    if ($show == true) {
         startScreen();
         echo "Current Player: ";
         echo $counter;
@@ -73,19 +72,21 @@ while (1){
         $control = trim(strtolower($control));
         $show = false;
     }
-    if ($control=="new"){
+    if ($control == "new") {
         startScreen();
-        if ($counter > 1){
+        if ($counter > 1) {
             echo "====================================";
             echo "\nMax Player Reached, battle will start!";
             $control = "start";
         } else {
-            echo "Put Player Name: "; $playersName = fgets(STDIN);
+            echo "Put Player Name: ";
+            $playersName = fgets(STDIN);
             //array_push($players, new Player($playersName));
             //array_push($valid, $playersName);
-            while (array_key_exists($playersName, $players)){
+            while (array_key_exists($playersName, $players)) {
                 echo "\nName already exist. Please enter again:\n";
-                echo "Put Player Name: "; $playersName = fgets(STDIN);
+                echo "Put Player Name: ";
+                $playersName = fgets(STDIN);
             }
             $players[$playersName] = new Player($playersName);
             ++$counter;
@@ -94,55 +95,60 @@ while (1){
             $show = true;
         }
     }
-    if ($control=="start"){
-        if($counter < 2){
+    if ($control == "start") {
+        if ($counter < 2) {
             echo "\n###################################\n";
             echo "Min Player is 2 to start the game!";
             $show = true;
         } else {
-            echo "\n====================================\n";
-            echo "Welcome to the Battle Arena\n";
-            echo "--------------------------------------\n";
-            echo "Battle Start: \n";
-            echo "who will attack: "; $player1 = fgets(STDIN);
-            while(!array_key_exists($player1, $players)){
-                echo "player not found. enter again: \n";
+            while (1) {
+                echo "\n====================================\n";
+                echo "Welcome to the Battle Arena\n";
+                echo "--------------------------------------\n";
+                echo "Battle Start: \n";
+                echo "who will attack: ";
                 $player1 = fgets(STDIN);
-            }
-            echo "who attacked: "; $player2 = fgets(STDIN);
-            while(($player2 == $player1) or (!array_key_exists($player2, $players))){
-                echo "cannot use this player. enter again: \n";
+                while (!array_key_exists($player1, $players)) {
+                    echo "player not found. enter again: \n";
+                    $player1 = fgets(STDIN);
+                }
+                echo "who attacked: ";
                 $player2 = fgets(STDIN);
-            }
-            //each attack will reduce attacker mana by 8 and reduce target blood by 20
-            $players[$player2]->blood = $players[$player2]->blood - 20;
-            $players[$player1]->mana = $players[$player1]->mana - 8;
+                while (($player2 == $player1) or ( !array_key_exists($player2, $players))) {
+                    echo "cannot use this player. enter again: \n";
+                    $player2 = fgets(STDIN);
+                }
+                //each attack will reduce attacker mana by 8 and reduce target blood by 20
+                $players[$player2]->blood = $players[$player2]->blood - 20;
+                $players[$player1]->mana = $players[$player1]->mana - 8;
 
-            $info = true;
-        }
-    }
-    if ($info == true){
-        echo "\nBattle Start: \n";
-        echo "who will attack: $player1\n";
-        echo "who attacked: $player2\n";
-        echo "Description:\n";
-        echo $players[$player1]->getName() ." : manna = " . $players[$player1]->mana . ", blood = " . $players[$player1]->blood . "\n";
-        echo $players[$player2]->getName() ." : manna = " . $players[$player2]->mana . ", blood = " . $players[$player2]->blood . "\n";
-        if (($players[$player1]->blood == 0) or ($players[$player2]->blood == 0)){
-            echo "\n########  GAME OVER  #########\n\n";
+                echo "\nBattle Start: \n";
+                echo "who will attack: $player1\n";
+                echo "who attacked: $player2\n";
+                echo "Description:\n";
+                echo $players[$player1]->getName() . " : manna = " . $players[$player1]->mana . ", blood = " . $players[$player1]->blood . "\n";
+                echo $players[$player2]->getName() . " : manna = " . $players[$player2]->mana . ", blood = " . $players[$player2]->blood . "\n";
+                if (($players[$player1]->blood == 0) or ( $players[$player2]->blood == 0)) {
+                    if ($players[$player1]->blood > 0) {
+                        echo "\nThe winner is: $player1";
+                    }
+                    if ($players[$player2]->blood > 0) {
+                        echo "\nThe winner is: $player2";
+                    }
+                    echo "\n########  GAME OVER  #########\n\n";
+                    break;
+                }
+            }
             break;
-        } else {
-            $control = "start";   
         }
-        $info = false;
     }
-    if ($control == "exit"){
+
+    if ($control == "exit") {
         echo "\n####################################";
         echo "\n*********    GOOD BYE   *********";
         echo "\n####################################\n";
         break;
-    }
-    else {
+    } else {
         echo "\n####################################";
         echo "\n*********    TRY AGAIN   *********";
         $show = true;
